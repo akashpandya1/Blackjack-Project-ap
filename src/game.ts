@@ -150,7 +150,7 @@ while (playerBalance >= 0) {
 } 
 
 if (playerBalance > 0){
-    console.log(`Your final balanace is $${playerBalance}. Congratulations and well done!`) 
+    console.log(`Your final balanace is $${playerBalance}. Congratulations!`) 
 } 
 else {
     console.log(`Your final balanace is $${playerBalance}.`)
