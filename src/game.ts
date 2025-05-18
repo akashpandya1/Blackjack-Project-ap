@@ -2,7 +2,6 @@ import {getBet, dealerCardsDealt, playerCardsDealt, dealDealerCard, dealPlayerCa
 import {Deck} from "./deck";
 import PromptSync from "prompt-sync";
 const prompt = PromptSync(); 
-let cardCount: number = 2; 
 let h: string = "";
 let playerBalance: number = 100; 
 let playerScore: number = 0;
@@ -22,7 +21,6 @@ function makeBet(){
 }
 
 function resetRound() {
-    cardCount = 2;
     h = "";
     playerScore = 0;
     dealerScore = 0;
@@ -37,10 +35,10 @@ function resetRound() {
 
 function initialDeal(){
     makeBet(); 
-    dealPlayerCard(deck, 0);
-    dealPlayerCard(deck, 1);
-    dealDealerCard(deck, 51);
-    dealDealerCard(deck, 50);
+    dealPlayerCard(deck);
+    dealPlayerCard(deck);
+    dealDealerCard(deck);
+    dealDealerCard(deck);
 
     if (evaluate(playerCardsDealt) == 21){
         console.log(`Your hand: ${getStrHand(playerCardsDealt, 0)} (Blackjack!)`)
@@ -57,8 +55,7 @@ function initialDeal(){
 
 function playerTurn() { 
     while (evaluate(playerCardsDealt) < 21 && h !== "stand"){
-        dealPlayerCard(deck, cardCount);
-        cardCount++; 
+        dealPlayerCard(deck);
         console.log("Your hand: " + getStrHand(playerCardsDealt, 0) + "(total = " + evaluate(playerCardsDealt) + ")"); 
         if (evaluate(playerCardsDealt) > 21){
             isPlayerBust = true; 
@@ -91,8 +88,7 @@ function dealerTurn(){
     }
 
     while (!isPlayerBust && evaluate(dealerCardsDealt) < 17){
-        dealDealerCard(deck, 51 - cardCount);
-        cardCount--; 
+        dealDealerCard(deck);
         console.log(`Dealer hits: ${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
         if (evaluate(dealerCardsDealt) > 21){
             isDealerBust = true;
@@ -104,9 +100,13 @@ function dealerTurn(){
 }
 
 
-while (playerBalance > 0) {
+while (playerBalance >= 0) {
     if (keepPlaying == "n"){
         break; 
+    }
+    else if (playerBalance == 0) {
+        console.log("Out of money!")
+        break;
     }
     resetRound(); 
     console.log("\n" + "------------------------");

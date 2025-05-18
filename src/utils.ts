@@ -22,13 +22,13 @@ function getBet(balance: number): number {
 }
 
 
-function dealPlayerCard(d: Deck, index: number): Card[] {
-    playerCardsDealt.push(d.getCardFromDeck(index));
+function dealPlayerCard(d: Deck): Card[] {
+    playerCardsDealt.push(d.draw());
     return playerCardsDealt;
 }
 
-function dealDealerCard(d: Deck, index: number): Card[] {
-    dealerCardsDealt.push(d.getCardFromDeck(index));
+function dealDealerCard(d: Deck): Card[] {
+    dealerCardsDealt.push(d.draw());
     return dealerCardsDealt;
 }
 

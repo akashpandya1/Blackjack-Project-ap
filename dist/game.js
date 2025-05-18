@@ -7,7 +7,6 @@ const utils_1 = require("./utils");
 const deck_1 = require("./deck");
 const prompt_sync_1 = __importDefault(require("prompt-sync"));
 const prompt = (0, prompt_sync_1.default)();
-let cardCount = 2;
 let h = "";
 let playerBalance = 100;
 let playerScore = 0;
@@ -24,7 +23,6 @@ function makeBet() {
     bet = (0, utils_1.getBet)(playerBalance);
 }
 function resetRound() {
-    cardCount = 2;
     h = "";
     playerScore = 0;
     dealerScore = 0;
@@ -36,14 +34,12 @@ function resetRound() {
     (0, utils_1.resetHands)();
     deck.shuffle();
 }
-function updateBalance() {
-}
 function initialDeal() {
     makeBet();
-    (0, utils_1.dealPlayerCard)(deck, 0);
-    (0, utils_1.dealPlayerCard)(deck, 1);
-    (0, utils_1.dealDealerCard)(deck, 51);
-    (0, utils_1.dealDealerCard)(deck, 50);
+    (0, utils_1.dealPlayerCard)(deck);
+    (0, utils_1.dealPlayerCard)(deck);
+    (0, utils_1.dealDealerCard)(deck);
+    (0, utils_1.dealDealerCard)(deck);
     if ((0, utils_1.evaluate)(utils_1.playerCardsDealt) == 21) {
         console.log(`Your hand: ${(0, utils_1.getStrHand)(utils_1.playerCardsDealt, 0)} (Blackjack!)`);
         console.log(`Dealer's hand: ${(0, utils_1.getStrHand)(utils_1.dealerCardsDealt, 1)} [hidden]`);
@@ -57,8 +53,7 @@ function initialDeal() {
 }
 function playerTurn() {
     while ((0, utils_1.evaluate)(utils_1.playerCardsDealt) < 21 && h !== "stand") {
-        (0, utils_1.dealPlayerCard)(deck, cardCount);
-        cardCount++;
+        (0, utils_1.dealPlayerCard)(deck);
         console.log("Your hand: " + (0, utils_1.getStrHand)(utils_1.playerCardsDealt, 0) + "(total = " + (0, utils_1.evaluate)(utils_1.playerCardsDealt) + ")");
         if ((0, utils_1.evaluate)(utils_1.playerCardsDealt) > 21) {
             isPlayerBust = true;
@@ -87,8 +82,7 @@ function dealerTurn() {
         isDealerBlackJack = true;
     }
     while (!isPlayerBust && (0, utils_1.evaluate)(utils_1.dealerCardsDealt) < 17) {
-        (0, utils_1.dealDealerCard)(deck, 51 - cardCount);
-        cardCount--;
+        (0, utils_1.dealDealerCard)(deck);
         console.log(`Dealer hits: ${(0, utils_1.getStrHand)(utils_1.dealerCardsDealt, 0)} (total: ${(0, utils_1.evaluate)(utils_1.dealerCardsDealt)})`);
         if ((0, utils_1.evaluate)(utils_1.dealerCardsDealt) > 21) {
             isDealerBust = true;
@@ -98,8 +92,12 @@ function dealerTurn() {
     }
     dealerScore = (0, utils_1.evaluate)(utils_1.dealerCardsDealt);
 }
-while (playerBalance > 0) {
+while (playerBalance >= 0) {
     if (keepPlaying == "n") {
+        break;
+    }
+    else if (playerBalance == 0) {
+        console.log("Out of money!");
         break;
     }
     resetRound();
@@ -158,9 +156,9 @@ while (playerBalance > 0) {
     }
 }
 if (playerBalance > 0) {
-    console.log(`Your final balanace is: $${playerBalance}. Congratulations!`);
+    console.log(`Your final balanace is $${playerBalance}. Congratulations!`);
 }
 else {
-    console.log(`Your final balanace is: $${playerBalance}.`);
+    console.log(`Your final balanace is $${playerBalance}.`);
 }
 //# sourceMappingURL=game.js.map
