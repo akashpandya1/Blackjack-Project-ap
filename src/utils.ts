@@ -3,10 +3,10 @@ import PromptSync from "prompt-sync";
 import { Deck } from "./deck";
 
 const prompt = PromptSync();
+const playerCardsDealt: Card[] = []; 
+const dealerCardsDealt: Card[] = []; 
 
-let bet: number;
-
-function getBet(balance: number): void {
+function getBet(balance: number): number {
   const tempBet = prompt("Enter your bet: ");
   const enteredBet = Number(tempBet);
   if (isNaN(enteredBet) || enteredBet <= 0){
@@ -18,44 +18,49 @@ function getBet(balance: number): void {
     return getBet(balance);
   }
 
-  bet = enteredBet;
+  return enteredBet;
 }
 
-const cardsDealt: Card[] = []; 
 
-function dealCard(d: Deck, index: number): Card[] {
-    cardsDealt.push(d.getCardFromDeck(index));
-    return cardsDealt;
+function dealPlayerCard(d: Deck): Card[] {
+    playerCardsDealt.push(d.draw());
+    return playerCardsDealt;
 }
 
-function getStrHand(): string {
+function dealDealerCard(d: Deck): Card[] {
+    dealerCardsDealt.push(d.draw());
+    return dealerCardsDealt;
+}
+
+function getStrHand(dealtCards: Card[], index: number): string {
     let hand: string = "";
-    for (let i = 0; i < cardsDealt.length; i++){
-        hand += cardsDealt[i].getValue() + cardsDealt[i].getSuit() + "  " ;
+    for (let i = 0; i < dealtCards.length - index; i++){
+        hand += dealtCards[i].getValue() + dealtCards[i].getSuit() + "  " ;
     }
-    return `Your hand: ${hand}`;
+    return hand; 
 }
 
 
-function evaluate(): number{
-    let total = 0;
-    for (let i = 0; i < cardsDealt.length; i++){
-        const indexCardValue: string = cardsDealt[i].getValue();
+function evaluate(dealtCards: Card[]): number{
+    let total:number = 0;
+    let aces: number = 0;
+    for (let i = 0; i < dealtCards.length; i++){
+        const indexCardValue: string = dealtCards[i].getValue();
         if (indexCardValue == "J" || indexCardValue == "Q" || indexCardValue == "K"){
             total += 10; 
         }
         else if (indexCardValue == "A"){
-            if (21 - total >= 11){
-                total += 11;
-            }
-            else {
-                total += 1; 
-            }
+           aces++;
         }
         else {
             total += Number(indexCardValue);
         }
     }
+    total += aces;
+    if (total <= 11 && aces > 0){
+        total += 10; 
+    }
+
     return total; 
 }
 
@@ -68,5 +73,11 @@ function HitOrStand(): string{
     return HS; 
 }
 
+function resetHands(): void{
+    playerCardsDealt.length = 0
+    dealerCardsDealt.length = 0; 
+}
 
-export {bet, getBet, cardsDealt, dealCard, getStrHand, evaluate, HitOrStand};
+
+
+export {getBet, playerCardsDealt, dealerCardsDealt, dealPlayerCard, dealDealerCard, getStrHand, evaluate, HitOrStand, resetHands};

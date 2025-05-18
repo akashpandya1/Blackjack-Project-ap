@@ -1,31 +1,53 @@
-import {bet, getBet, dealCard, cardsDealt, getStrHand, evaluate, HitOrStand} from "./utils";
+import {getBet, dealerCardsDealt, playerCardsDealt, dealDealerCard, dealPlayerCard, getStrHand, evaluate, HitOrStand, resetHands} from "./utils";
 import {Deck} from "./deck";
-import { Card } from "./card";
 import PromptSync from "prompt-sync";
 const prompt = PromptSync(); 
-let cardCount: number = 2; 
+let h: string = "";
+let playerBalance: number = 100; 
+let playerScore: number = 0;
+let dealerScore: number = 0;
+let isPlayerBlackJack: boolean = false; 
+let isDealerBlackJack: boolean = false; 
+let isPlayerBust: boolean = false; 
+let isDealerBust: boolean = false;  
+let keepPlaying: string = "y";
+let bet: number = 0;
 
 const deck = new Deck()
-deck.shuffle(); 
-
-let playerBalance: number = 100; 
 
 function makeBet(){
     console.log("Your balance: " + playerBalance);
-    getBet(playerBalance);
+    bet = getBet(playerBalance);
 }
 
-function playerTurn(){
+function resetRound() {
+    h = "";
+    playerScore = 0;
+    dealerScore = 0;
+    isPlayerBlackJack = false;
+    isDealerBlackJack = false;
+    isPlayerBust = false;
+    isDealerBust = false;
+    bet = 0;
+    resetHands(); 
+    deck.shuffle(); 
+}
+
+function initialDeal(){
     makeBet(); 
-    dealCard(deck, 0);
-    dealCard(deck, 1);
-    let h: string = "";
-    if (evaluate() == 21){
-        console.log(`${getStrHand()} (Blackjack!)`)
-        let isPlayerBlackJack: boolean = true; 
+    dealPlayerCard(deck);
+    dealPlayerCard(deck);
+    dealDealerCard(deck);
+    dealDealerCard(deck);
+
+    if (evaluate(playerCardsDealt) == 21){
+        console.log(`Your hand: ${getStrHand(playerCardsDealt, 0)} (Blackjack!)`)
+        console.log(`Dealer's hand: ${getStrHand(dealerCardsDealt, 1)} [hidden]`)
+        isPlayerBlackJack = true; 
     }
     else {
-       console.log(getStrHand() + " (total = " + evaluate() + ")"); 
+       console.log("Your hand: " + getStrHand(playerCardsDealt, 0) + "(total = " + evaluate(playerCardsDealt) + ")"); 
+       console.log(`Dealer's hand: ${getStrHand(dealerCardsDealt, 1)}[hidden]`);
        h = HitOrStand(); 
     }
     while (evaluate() < 21 && h !== "stand"){
@@ -33,21 +55,28 @@ function playerTurn(){
         cardCount++; 
         console.log(getStrHand() + "(total = " + evaluate() + ")"); 
         if (evaluate() > 21){
-            let isBust: boolean = true;
             console.log("Bust!");
-            playerBalance -= bet; 
+            break;
+        }
+        if (evaluate(playerCardsDealt) == 21){
             break;
         }
         h = HitOrStand();
     }
-
-    if (h == "stand" || evaluate() == 21){
-        console.log(`Your final score is ${evaluate()}. Let's see how the dealer does!`)
-    }
-}
-
+        playerScore = evaluate(playerCardsDealt); 
+        if (!isPlayerBlackJack && !isPlayerBust){
+            console.log(`Your final score is ${playerScore}. Let's see how the dealer does!`);
+        }
+        else if (isPlayerBlackJack){
+            console.log(`Your final score is ${playerScore}. Blackjack!`)
+        }
+        else {
+            console.log(`Your final score is ${playerScore}.`);
+        }
+  }
+  
 function dealerTurn(){
-
+    
 }
 
 playerTurn(); 
