@@ -46,7 +46,7 @@ function playerTurn(){
 }
 
 function dealerTurn(){
-    
+
 }
 
 playerTurn(); 
