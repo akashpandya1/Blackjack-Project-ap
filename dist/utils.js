@@ -3,15 +3,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cardsDealt = exports.bet = void 0;
+exports.dealerCardsDealt = exports.playerCardsDealt = void 0;
 exports.getBet = getBet;
-exports.dealCard = dealCard;
+exports.dealPlayerCard = dealPlayerCard;
+exports.dealDealerCard = dealDealerCard;
 exports.getStrHand = getStrHand;
 exports.evaluate = evaluate;
 exports.HitOrStand = HitOrStand;
+exports.resetHands = resetHands;
 const prompt_sync_1 = __importDefault(require("prompt-sync"));
 const prompt = (0, prompt_sync_1.default)();
-let bet;
+const playerCardsDealt = [];
+exports.playerCardsDealt = playerCardsDealt;
+const dealerCardsDealt = [];
+exports.dealerCardsDealt = dealerCardsDealt;
 function getBet(balance) {
     const tempBet = prompt("Enter your bet: ");
     const enteredBet = Number(tempBet);
@@ -23,25 +28,27 @@ function getBet(balance) {
         console.log("Bet exceeds your balance. Please enter a valid bet: ");
         return getBet(balance);
     }
-    exports.bet = bet = enteredBet;
+    return enteredBet;
 }
-const cardsDealt = [];
-exports.cardsDealt = cardsDealt;
-function dealCard(d, index) {
-    cardsDealt.push(d.getCardFromDeck(index));
-    return cardsDealt;
+function dealPlayerCard(d, index) {
+    playerCardsDealt.push(d.getCardFromDeck(index));
+    return playerCardsDealt;
 }
-function getStrHand() {
+function dealDealerCard(d, index) {
+    dealerCardsDealt.push(d.getCardFromDeck(index));
+    return dealerCardsDealt;
+}
+function getStrHand(dealtCards, index) {
     let hand = "";
-    for (let i = 0; i < cardsDealt.length; i++) {
-        hand += cardsDealt[i].getValue() + cardsDealt[i].getSuit() + "  ";
+    for (let i = 0; i < dealtCards.length - index; i++) {
+        hand += dealtCards[i].getValue() + dealtCards[i].getSuit() + "  ";
     }
-    return `Your hand: ${hand}`;
+    return hand;
 }
-function evaluate() {
+function evaluate(dealtCards) {
     let total = 0;
-    for (let i = 0; i < cardsDealt.length; i++) {
-        const indexCardValue = cardsDealt[i].getValue();
+    for (let i = 0; i < dealtCards.length; i++) {
+        const indexCardValue = dealtCards[i].getValue();
         if (indexCardValue == "J" || indexCardValue == "Q" || indexCardValue == "K") {
             total += 10;
         }
@@ -66,5 +73,9 @@ function HitOrStand() {
         return HitOrStand();
     }
     return HS;
+}
+function resetHands() {
+    playerCardsDealt.length = 0;
+    dealerCardsDealt.length = 0;
 }
 //# sourceMappingURL=utils.js.map
