@@ -4,22 +4,26 @@ import { Suit, Values } from "./types";
 export class Deck {
   private deck: Card[] = [];
   constructor() {
+    this.resetDeck();
+  }
+  private resetDeck(): void {
+    this.deck = [];
     const suits = Object.values(Suit);
     const values = Object.values(Values);
-
     for (const suit of suits) {
       for (const value of values) {
         this.deck.push(new Card(suit, value));
       }
     }
+    this.shuffle();
   }
 
-  public getDeck(): Card[] {
-    return this.deck
-  }
-
-  public getCardFromDeck(index: number): Card {
-    return this.deck[index];
+  public draw(): Card {
+    if (this.deck.length === 0) {
+      console.log("Deck is empty. Creating a new shuffled deck...");
+      this.resetDeck();
+    }
+    return this.deck.pop() as Card;
   }
 
   public shuffle(): Card[] {
@@ -32,4 +36,3 @@ export class Deck {
     return this.deck;
   }
 }
-

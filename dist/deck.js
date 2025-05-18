@@ -6,6 +6,10 @@ const types_1 = require("./types");
 class Deck {
     constructor() {
         this.deck = [];
+        this.resetDeck();
+    }
+    resetDeck() {
+        this.deck = [];
         const suits = Object.values(types_1.Suit);
         const values = Object.values(types_1.Values);
         for (const suit of suits) {
@@ -13,12 +17,14 @@ class Deck {
                 this.deck.push(new card_1.Card(suit, value));
             }
         }
+        this.shuffle();
     }
-    getDeck() {
-        return this.deck;
-    }
-    getCardFromDeck(index) {
-        return this.deck[index];
+    draw() {
+        if (this.deck.length === 0) {
+            console.log("Deck is empty. Creating a new shuffled deck...");
+            this.resetDeck();
+        }
+        return this.deck.pop();
     }
     shuffle() {
         for (let i = this.deck.length - 1; i > 0; i--) {

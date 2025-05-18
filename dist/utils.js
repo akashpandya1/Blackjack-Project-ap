@@ -30,12 +30,12 @@ function getBet(balance) {
     }
     return enteredBet;
 }
-function dealPlayerCard(d, index) {
-    playerCardsDealt.push(d.getCardFromDeck(index));
+function dealPlayerCard(d) {
+    playerCardsDealt.push(d.draw());
     return playerCardsDealt;
 }
-function dealDealerCard(d, index) {
-    dealerCardsDealt.push(d.getCardFromDeck(index));
+function dealDealerCard(d) {
+    dealerCardsDealt.push(d.draw());
     return dealerCardsDealt;
 }
 function getStrHand(dealtCards, index) {
