@@ -105,7 +105,7 @@ while (playerBalance >= 0) {
         break; 
     }
     else if (playerBalance == 0) {
-        console.log("Out of money!")
+        console.log("You're out of money!")
         break;
     }
     resetRound(); 
@@ -113,7 +113,7 @@ while (playerBalance >= 0) {
     initialDeal(); 
     playerTurn();
     if (isPlayerBust){
-        console.log(`Dealer's hand: $${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
+        console.log(`Dealer's hand: ${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
         console.log(`You bust and lose $${bet}`); 
         playerBalance -= bet; 
         console.log("Player funds: " + playerBalance);
