@@ -3,10 +3,10 @@ import PromptSync from "prompt-sync";
 import { Deck } from "./deck";
 
 const prompt = PromptSync();
+const playerCardsDealt: Card[] = []; 
+const dealerCardsDealt: Card[] = []; 
 
-let bet: number;
-
-function getBet(balance: number): void {
+function getBet(balance: number): number {
   const tempBet = prompt("Enter your bet: ");
   const enteredBet = Number(tempBet);
   if (isNaN(enteredBet) || enteredBet <= 0){
@@ -18,29 +18,33 @@ function getBet(balance: number): void {
     return getBet(balance);
   }
 
-  bet = enteredBet;
+  return enteredBet;
 }
 
-const cardsDealt: Card[] = []; 
 
-function dealCard(d: Deck, index: number): Card[] {
-    cardsDealt.push(d.getCardFromDeck(index));
-    return cardsDealt;
+function dealPlayerCard(d: Deck, index: number): Card[] {
+    playerCardsDealt.push(d.getCardFromDeck(index));
+    return playerCardsDealt;
 }
 
-function getStrHand(): string {
+function dealDealerCard(d: Deck, index: number): Card[] {
+    dealerCardsDealt.push(d.getCardFromDeck(index));
+    return dealerCardsDealt;
+}
+
+function getStrHand(dealtCards: Card[], index: number): string {
     let hand: string = "";
-    for (let i = 0; i < cardsDealt.length; i++){
-        hand += cardsDealt[i].getValue() + cardsDealt[i].getSuit() + "  " ;
+    for (let i = 0; i < dealtCards.length - index; i++){
+        hand += dealtCards[i].getValue() + dealtCards[i].getSuit() + "  " ;
     }
-    return `Your hand: ${hand}`;
+    return hand; 
 }
 
 
-function evaluate(): number{
+function evaluate(dealtCards: Card[]): number{
     let total = 0;
-    for (let i = 0; i < cardsDealt.length; i++){
-        const indexCardValue: string = cardsDealt[i].getValue();
+    for (let i = 0; i < dealtCards.length; i++){
+        const indexCardValue: string = dealtCards[i].getValue();
         if (indexCardValue == "J" || indexCardValue == "Q" || indexCardValue == "K"){
             total += 10; 
         }
@@ -68,5 +72,9 @@ function HitOrStand(): string{
     return HS; 
 }
 
+function resetHands(): void{
+    playerCardsDealt.length = 0
+    dealerCardsDealt.length = 0; 
+}
 
-export {bet, getBet, cardsDealt, dealCard, getStrHand, evaluate, HitOrStand};
+export {getBet, playerCardsDealt, dealerCardsDealt, dealPlayerCard, dealDealerCard, getStrHand, evaluate, HitOrStand, resetHands};
