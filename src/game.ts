@@ -33,6 +33,7 @@ function playerTurn(){
         cardCount++; 
         console.log(getStrHand() + "(total = " + evaluate() + ")"); 
         if (evaluate() > 21){
+            let isBust: boolean = true;
             console.log("Bust!");
             playerBalance -= bet; 
             break;
