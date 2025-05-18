@@ -42,24 +42,25 @@ function getStrHand(dealtCards: Card[], index: number): string {
 
 
 function evaluate(dealtCards: Card[]): number{
-    let total = 0;
+    let total:number = 0;
+    let aces: number = 0;
     for (let i = 0; i < dealtCards.length; i++){
         const indexCardValue: string = dealtCards[i].getValue();
         if (indexCardValue == "J" || indexCardValue == "Q" || indexCardValue == "K"){
             total += 10; 
         }
         else if (indexCardValue == "A"){
-            if (21 - total >= 11){
-                total += 11;
-            }
-            else {
-                total += 1; 
-            }
+           aces++;
         }
         else {
             total += Number(indexCardValue);
         }
     }
+    total += aces;
+    if (total <= 11 && aces > 0){
+        total += 10; 
+    }
+
     return total; 
 }
 
@@ -76,5 +77,7 @@ function resetHands(): void{
     playerCardsDealt.length = 0
     dealerCardsDealt.length = 0; 
 }
+
+
 
 export {getBet, playerCardsDealt, dealerCardsDealt, dealPlayerCard, dealDealerCard, getStrHand, evaluate, HitOrStand, resetHands};
