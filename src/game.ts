@@ -50,11 +50,15 @@ function initialDeal(){
        console.log(`Dealer's hand: ${getStrHand(dealerCardsDealt, 1)}[hidden]`);
        h = HitOrStand(); 
     }
-    while (evaluate() < 21 && h !== "stand"){
-        dealCard(deck, cardCount);
-        cardCount++; 
-        console.log(getStrHand() + "(total = " + evaluate() + ")"); 
-        if (evaluate() > 21){
+}
+
+
+function playerTurn() { 
+    while (evaluate(playerCardsDealt) < 21 && h !== "stand"){
+        dealPlayerCard(deck);
+        console.log("Your hand: " + getStrHand(playerCardsDealt, 0) + "(total = " + evaluate(playerCardsDealt) + ")"); 
+        if (evaluate(playerCardsDealt) > 21){
+            isPlayerBust = true; 
             console.log("Bust!");
             break;
         }
@@ -76,9 +80,24 @@ function initialDeal(){
   }
   
 function dealerTurn(){
-    
-}
 
+    console.log(`Dealer's hand: ${getStrHand(dealerCardsDealt, 0)}(total = ${evaluate(dealerCardsDealt)})`);
+
+    if (evaluate(dealerCardsDealt) == 21){
+        isDealerBlackJack = true; 
+    }
+
+    while (!isPlayerBust && evaluate(dealerCardsDealt) < 17){
+        dealDealerCard(deck);
+        console.log(`Dealer hits: ${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
+        if (evaluate(dealerCardsDealt) > 21){
+            isDealerBust = true;
+            console.log("Dealer busts!");
+            break; 
+        }
+    }
+    dealerScore = evaluate(dealerCardsDealt);
+}
 
 
 while (playerBalance >= 0) {
@@ -86,7 +105,7 @@ while (playerBalance >= 0) {
         break; 
     }
     else if (playerBalance == 0) {
-        console.log("You are out of money! Oh no!")
+        console.log("You are out of money!")
         break;
     }
     resetRound(); 
@@ -155,7 +174,6 @@ if (playerBalance > 0){
 else {
     console.log(`Your final balanace is $${playerBalance}.`)
 }
-
 
 
 
