@@ -105,7 +105,7 @@ while (playerBalance >= 0) {
         break; 
     }
     else if (playerBalance == 0) {
-        console.log("You're out of money!")
+        console.log("You are out of money!")
         break;
     }
     resetRound(); 
