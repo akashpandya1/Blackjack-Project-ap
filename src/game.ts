@@ -11,6 +11,7 @@ let isPlayerBlackJack: boolean = false;
 let isDealerBlackJack: boolean = false; 
 let isPlayerBust: boolean = false; 
 let isDealerBust: boolean = false;  
+let keepPlaying: string = "y";
 let bet: number = 0;
 
 const deck = new Deck()
@@ -70,7 +71,15 @@ function playerTurn() {
         h = HitOrStand();
     }
         playerScore = evaluate(playerCardsDealt); 
-        console.log(`Your final score is ${playerScore}. Let's see how the dealer does!`)
+        if (!isPlayerBlackJack && !isPlayerBust){
+            console.log(`Your final score is ${playerScore}. Let's see how the dealer does!`);
+        }
+        else if (isPlayerBlackJack){
+            console.log(`Your final score is ${playerScore}. Blackjack!`)
+        }
+        else {
+            console.log(`Your final score is ${playerScore}.`);
+        }
   }
   
 function dealerTurn(){
@@ -84,10 +93,10 @@ function dealerTurn(){
     while (!isPlayerBust && evaluate(dealerCardsDealt) < 17){
         dealDealerCard(deck, 51 - cardCount);
         cardCount--; 
-        console.log(`Dealer hits: ${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`)
+        console.log(`Dealer hits: ${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
         if (evaluate(dealerCardsDealt) > 21){
             isDealerBust = true;
-            console.log("Dealer busts!")
+            console.log("Dealer busts!");
             break; 
         }
     }
@@ -96,50 +105,78 @@ function dealerTurn(){
 
 
 while (playerBalance > 0) {
+    if (keepPlaying == "n"){
+        break; 
+    }
     resetRound(); 
     console.log("\n" + "------------------------");
     initialDeal(); 
     playerTurn();
     if (isPlayerBust){
+        console.log(`Dealer's hand: $${getStrHand(dealerCardsDealt, 0)} (total: ${evaluate(dealerCardsDealt)})`);
         console.log(`You bust and lose $${bet}`); 
         playerBalance -= bet; 
         console.log("Player funds: " + playerBalance);
+        keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
         continue; 
     }
     if (isPlayerBlackJack){
         console.log("You win $" + bet * 1.5 + "!")
         playerBalance += bet * 1.5; 
         console.log("Player funds: " + playerBalance);
+        keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
         continue; 
     }
+
+    if (!isPlayerBust){
     dealerTurn(); 
-    if (isDealerBust || playerScore > dealerScore){
-        console.log(`You win $${bet}`);
-        playerBalance += bet; 
-        console.log("Player funds: " + playerBalance);
-        continue; 
-    }
-    if (isDealerBlackJack && playerScore != 21){
-        console.log(`Dealer has Blackjack. You lose $${bet}`);
-        playerBalance -= bet;
-        console.log("Player funds: " + playerBalance);
-        continue;
-    }
+        if (isDealerBust || playerScore > dealerScore){
+            console.log(`You win $${bet}`);
+            playerBalance += bet; 
+            console.log("Player funds: " + playerBalance);
+            keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
+            continue; 
+        }
+        if (isDealerBlackJack && playerScore != 21){
+            console.log(`Dealer has Blackjack. You lose $${bet}`);
+            playerBalance -= bet;
+            console.log("Player funds: " + playerBalance);
+            keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
+            continue;
+        }
 
-    if (dealerScore > playerScore){
-        console.log(`You lose $${bet}`);
-        playerBalance -= bet;
-        console.log("Player funds: " + playerBalance);
-        continue; 
-    }
+        if (dealerScore > playerScore){
+            console.log(`You lose $${bet}`);
+            playerBalance -= bet;
+            console.log("Player funds: " + playerBalance);
+            keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
+            continue; 
+        }
 
-    if (dealerScore == playerScore){
-        console.log("It's a push! Your bet is returned.")
-        console.log("Player funds: " + playerBalance);    
-        continue; 
+        if (isPlayerBlackJack && isDealerBlackJack){
+            console.log("Two Blackjacks! The game is over.")
+            console.log("Player funds: " + playerBalance);
+            break;
+        }
+
+        if (dealerScore == playerScore){
+            console.log("It's a push! Your bet is returned.")
+            console.log("Player funds: " + playerBalance);    
+            keepPlaying = prompt("Continue playing? (Y/N): ").toLowerCase();
+            continue; 
     }
+  }
+} 
+
+if (playerBalance > 0){
+    console.log(`Your final balanace is $${playerBalance}. Congratulations!`) 
+} 
+else {
+    console.log(`Your final balanace is $${playerBalance}.`)
 }
-  
+
+
+
 
 
 

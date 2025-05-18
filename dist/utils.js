@@ -47,22 +47,22 @@ function getStrHand(dealtCards, index) {
 }
 function evaluate(dealtCards) {
     let total = 0;
+    let aces = 0;
     for (let i = 0; i < dealtCards.length; i++) {
         const indexCardValue = dealtCards[i].getValue();
         if (indexCardValue == "J" || indexCardValue == "Q" || indexCardValue == "K") {
             total += 10;
         }
         else if (indexCardValue == "A") {
-            if (21 - total >= 11) {
-                total += 11;
-            }
-            else {
-                total += 1;
-            }
+            aces++;
         }
         else {
             total += Number(indexCardValue);
         }
+    }
+    total += aces;
+    if (total <= 11 && aces > 0) {
+        total += 10;
     }
     return total;
 }
